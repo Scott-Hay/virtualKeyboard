@@ -12,15 +12,13 @@ import javax.swing.border.LineBorder;
 
 public class virtualKeyboard {
     public static void main(String[] args) {
-        String[] pianoKeys = {"C", "D", "E", "F", "G", "A", "B"};
+        String[] pianoKeys = {"C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4", "B4"};
         int octave = 3;
-        Icon pianoIcon = new ImageIcon("C:\\Users\\30185601\\OneDrive - NESCol\\HNC Software Development\\virtualKeyboard\\Images\\pianoKeys\\iconC.png");
-
 
         JFrame f = new JFrame("Virtual Keyboard");
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(0, 7));
+        panel.setLayout(new GridLayout(0, 14));
         for(String pianoKey : pianoKeys) {
 
             JButton button = new JButton(pianoKey);
@@ -37,7 +35,7 @@ public class virtualKeyboard {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String pianoAudioFile = ("C:\\Users\\30185601\\OneDrive - NESCol\\HNC Software Development\\virtualKeyboard\\pianoAudio\\" + pianoKey + octave + ".wav");
+                    String pianoAudioFile = ("C:\\Users\\30185601\\OneDrive - NESCol\\HNC Software Development\\virtualKeyboard\\pianoAudio\\" + pianoKey + ".wav");
                     File pianoKeyAudio = new File(pianoAudioFile);
                     playKey(pianoKeyAudio);
                 }
