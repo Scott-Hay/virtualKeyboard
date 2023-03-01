@@ -6,13 +6,13 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.io.*;
-import javafx.scene.media.AudioClip;
 import javax.swing.border.LineBorder;
 
 
 public class virtualKeyboard {
     public static void main(String[] args) {
         String[] pianoKeys = {"C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4", "B4"};
+        String[] keybinds = {"q", "w", "e", "r", "t", "y", "u", "a", "s", "d", "f", "g", "h", "j"};
         int octave = 3;
 
         JFrame f = new JFrame("Virtual Keyboard");
@@ -21,8 +21,13 @@ public class virtualKeyboard {
         panel.setLayout(new GridLayout(0, 14));
         for(String pianoKey : pianoKeys) {
 
+
+
+
+
             JButton button = new JButton(pianoKey);
             button.setFocusable(false);
+
 
             button.setBorder(new LineBorder(Color.BLACK));
             button.setBackground(Color.WHITE);
