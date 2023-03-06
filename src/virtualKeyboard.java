@@ -39,25 +39,26 @@ public class virtualKeyboard {
             });
             panel.add(button);
 
-            f.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    char keyPressed = e.getKeyChar();
-                    for (int i = 0; i < keybinds.length; i++) {
-                        if (keyPressed == keybinds[i]) {
-                            JButton button = (JButton) panel.getComponent(i);
-                            button.doClick();
-                            break;
-                        }
-                    }
-                }
-            });
         }
 
         f.add(panel);
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setExtendedState(f.getExtendedState() | Frame.MAXIMIZED_BOTH);
+
+        f.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                char keyPressed = e.getKeyChar();
+                for (int i = 0; i < keybinds.length; i++) {
+                    if (keyPressed == keybinds[i]) {
+                        JButton button = (JButton) panel.getComponent(i);
+                        button.doClick();
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     static void playKey(File pianoKeyAudio) {
