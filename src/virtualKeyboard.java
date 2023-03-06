@@ -12,15 +12,24 @@ import javax.swing.border.LineBorder;
 public class virtualKeyboard {
     public static void main(String[] args) {
         String[] pianoKeys = {"C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4", "B4"};
-        String[] keybinds = {"q", "w", "e", "r", "t", "y", "u", "a", "s", "d", "f", "g", "h", "j"};
+        char[] keybinds = new char[]{'q', 'w', 'e', 'r', 't', 'y', 'u', 'a', 's', 'd', 'f', 'g', 'h', 'j'};
         JFrame f = new JFrame("Virtual Keyboard");
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(0, 14));
-        for(String pianoKey : pianoKeys) {
+
+
+        for(int i = 0; i < pianoKeys.length; i++) {
+            String pianoKey = pianoKeys[i];
+            char keybind = keybinds[i];
+
+
 
 
             JButton button = new JButton(pianoKey);
+            button.setMnemonic(keybind);
+
+
             button.setFocusable(false);
 
 
