@@ -1,5 +1,3 @@
-import com.sun.deploy.panel.JavaPanel;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.sound.sampled.AudioSystem;
@@ -9,13 +7,14 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 public class virtualKeyboard {
+    static boolean RECORDING = false;
+    static String FILENAME = null;
+    static String filePath = System.getProperty("user.dir");
     public static void main(String[] args) {
-        final int[] recording = {1};
-        final boolean[] recordKeys = {false};
+
         String[] pianoKeys = {"C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4", "B4"};
         char[] keybinds = new char[]{'q', 'w', 'e', 'r', 't', 'y', 'u', 'h', 'j', 'k', 'l', ';', '\'', '#'};
         JFrame f = new JFrame("Virtual Keyboard");
@@ -37,19 +36,18 @@ public class virtualKeyboard {
             button.setHorizontalTextPosition(SwingConstants.CENTER);
             button.setVerticalAlignment(SwingConstants.BOTTOM);
             button.setFont(new Font("Arial", Font.PLAIN, 40));
-
-
             //button.setMnemonic(keybinds[i]);
 
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String pianoAudioFile = ("C:\\Users\\30185601\\OneDrive - NESCol\\HNC Software Development\\virtualKeyboard\\pianoAudio\\" + pianoKey + ".wav");
+                    String pianoAudioFile = (filePath + "\\pianoAudio\\" + pianoKey + ".wav");
                     File pianoKeyAudio = new File(pianoAudioFile);
                     playKey(pianoKeyAudio);
-                    long time = System.currentTimeMillis();
-                    if(recordKeys[0]) {
+
+                    if(RECORDING) {
                         try {
+                            long time = System.currentTimeMillis();
                             recordKey(pianoKey, time);
                         } catch (IOException ex) {
                             throw new RuntimeException(ex);
@@ -58,10 +56,8 @@ public class virtualKeyboard {
 
                 }
             });
-
             panel.add(button);
         }
-
 
         //Playback and Record Button Panel
         content.add(panel, BorderLayout.CENTER);
@@ -77,19 +73,23 @@ public class virtualKeyboard {
         record.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(recording[0] == 0)
+                if(RECORDING)
                 {
-                    recording[0] = 1;
+                    // Stop recording
+                    RECORDING = false;
                     record.setText("Record");
                     record.setBackground(Color.red);
-                    recordKeys[0] = false;
                 }
-                else if(recording[0] == 1)
+                else
                 {
-                    recording[0] = 0;
+                    // Start recording
+                    RECORDING = true;
+                    FILENAME = null;
                     record.setText("Recording");
                     record.setBackground(Color.green);
-                    recordKeys[0] = true;
+                    if (FILENAME == null) {
+                        FILENAME = (String)JOptionPane.showInputDialog("Please give this file a name");
+                    }
                 }
 
             }
@@ -98,9 +98,22 @@ public class virtualKeyboard {
         playback.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                playBack();
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+                int result = fileChooser.showOpenDialog(f);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    try {
+                        playBack(String.valueOf(selectedFile));
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
+
 
 
 
@@ -138,14 +151,33 @@ public class virtualKeyboard {
         ArrayList<Object> keysPlayed = new ArrayList<Object>();
         keysPlayed.add(keyPlayed);
         keysPlayed.add(timeBetweenKeys);
-        String filename= "MyFile.txt";
-        FileWriter fw = new FileWriter(filename,true);
+
+        boolean append = true;
+        if (FILENAME == null) {
+            FILENAME = (String)JOptionPane.showInputDialog("Please give this file a name");
+            append = false;
+        }
+
+        FileWriter fw = new FileWriter(FILENAME,append);
         fw.write((keysPlayed) + "\n");
         fw.close();
     }
-    static void playBack() {
-
-
+    static void playBack(String file) throws IOException, InterruptedException {
+        BufferedReader reader;
+        reader = new BufferedReader(new FileReader(file));
+        String line = reader.readLine();
+        long previousTime = 0;
+        while (line != null) {
+            String[] arraySplit = line.split(",");
+            String pianoKey = (arraySplit[0].substring(1));
+            long timeBetweenKeys = Long.parseLong(arraySplit[1].substring(2, 14));
+            File pianoKeyAudio = new File((filePath + "\\pianoAudio\\" + pianoKey + ".wav"));
+            if (previousTime != 0) {
+                Thread.sleep(timeBetweenKeys - previousTime);
+            }
+            previousTime = timeBetweenKeys;
+            playKey(pianoKeyAudio);
+            line = reader.readLine();
+        }
     }
-
 }
